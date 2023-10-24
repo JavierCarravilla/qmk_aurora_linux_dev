@@ -1,0 +1,45 @@
+name: Build QMK firmware
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/qmk/qmk_cli
+    strategy:
+      fail-fast: false
+      matrix:
+        keyboard:
+        - splitkb/aurora/corne/rev1
+        keymap:
+        - linux_dev
+        build_file:
+        - splitkb_aurora_corne_rev1_linux_dev
+
+    steps:
+
+    - name: Disable git safe directory checks
+      run : git config --global --add safe.directory '*'
+
+    - name: Checkout QMK
+      uses: actions/checkout@v3
+      with:
+        repository: qmk/qmk_firmware
+        submodules: recursive
+
+    - name: Checkout keymap
+      uses: actions/checkout@v3
+      with:
+        path: keyboards/splitkb/aurora/corne/keymaps/${{ matrix.keymap }}
+
+    - name: Build firmware
+      run: qmk compile -kb ${{ matrix.keyboard }} -km ${{ matrix.keymap }}
+
+    - name: Archive firmware
+      uses: actions/upload-artifact@v3
+      continue-on-error: true
+      with:
+        name: ${{ build_file }}
+        path: |
+          *.hex
+          *.bin
+          *.uf2
