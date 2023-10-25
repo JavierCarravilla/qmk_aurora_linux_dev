@@ -85,14 +85,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
   switch (keycode) {
     case PRT_SCR:  // Macro to printscreen in ubuntu.
       if (record->event.pressed) {
-        SEND_STRING(SS_LSFT(SS_LCTL(X_PSCR));
+        SEND_STRING(SS_DOWN(X_LSFT) SS_DOWN(X_LCTL) SS_DOWN(X_PSCR));
+      } else {
+        clear_keyboard();
       }
-      return false;
+      break;
+
     case DBG_EVA: // Macro to evaluate expresion while debuging
       if (record->event.pressed) {
-        SEND_STRING(SS_LALT(SS_LSFT(X_8));
+        SEND_STRING(SS_DOWN(X_LALT) SS_DOWN(X_LSFT) SS_DOWN(X_8));
+      } else {
+        clear_keyboard();
       }
-      return false;
+      break;
+
   }
   return true;
 }
