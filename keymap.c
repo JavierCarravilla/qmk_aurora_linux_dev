@@ -24,8 +24,48 @@ enum layer_names {
 };
 
 enum custom_keycodes {
-  PRT_SCR = SAFE_RANGE,
+  PSCR_ST = SAFE_RANGE,
+  PSCR_CB,
   DBG_EVA
+};
+
+enum {
+  TD_PRT_SCR,
+  TD_RFS_BWR
+};
+
+void dance_prt_scr(tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    // Print screen to clipboard
+    SEND_STRING(SS_DOWN(X_LSFT) SS_DOWN(X_LCTL) SS_DOWN(X_PSCR));
+  } else if (state->count >= 1) {
+    // Print screen to save dialog
+    SEND_STRING(SS_DOWN(X_LSFT) SS_DOWN(X_PSCR));
+  }
+  clear_keyboard();
+};
+
+void start_dance_refresh_browser(tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    register_code16(KC_F5);
+  } else if (state->count >= 1) {
+    SEND_STRING(SS_DOWN(X_LSFT) SS_TAP(X_F5));
+    clear_keyboard();
+  }
+};
+
+void reset_dance_refresh_browser(tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    unregister_code16(KC_F5);
+  }
+};
+    
+// Tap Dance definitions
+tap_dance_action_t tap_dance_actions[] = {
+  // Print screen to clipboard on single tap and store it with double
+  [TD_PRT_SCR] = ACTION_TAP_DANCE_FN(dance_prt_scr),
+  // F5 on single tap, SHIFT + F5 on double
+  [TD_RFS_BWR] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, start_dance_refresh_browser, reset_dance_refresh_browser)
 };
 
 #define LGUI_KA LGUI_T(KC_A)
@@ -37,6 +77,9 @@ enum custom_keycodes {
 #define LALT_KL LALT_T(KC_K)
 #define RSFT_KK RSFT_T(KC_K)
 #define RCTL_KJ RCTL_T(KC_J)
+
+#define PRT_SCR TD(TD_PRT_SCR)
+#define RFS_BWR TD(TD_RFS_BWR)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -53,7 +96,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    [_LOWER] = LAYOUT_split_3x6_3(
         //|-----------------------------------------------------|        |-----------------------------------------------------|
             QK_GESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,            KC_6,    KC_7,    KC_8,     KC_9,    KC_0, KC_BSPC,
-             KC_TAB, XXXXXXX, XXXXXXX, XXXXXXX, PRT_SCR,   KC_F5,         KC_LEFT, KC_DOWN,   KC_UP, KC_RIGHT, XXXXXXX, XXXXXXX,
+             KC_TAB, XXXXXXX, XXXXXXX, XXXXXXX, PRT_SCR, RFS_BWR,         KC_LEFT, KC_DOWN,   KC_UP, KC_RIGHT, XXXXXXX, XXXXXXX,
             KC_LSFT, DBG_EVA,   KC_F7,   KC_F8,   KC_F9, XXXXXXX,         KC_HOME, KC_PGDN, KC_PGUP,   KC_END, XXXXXXX, KC_RSFT,
         //|-----------------------------------------------------|        |-----------------------------------------------------|
                                         KC_LSFT, _______, KC_SPC,          KC_ENT, MO(_RAISE), KC_RALT
@@ -83,14 +126,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
   switch (keycode) {
-    case PRT_SCR:  // Macro to printscreen in ubuntu.
-      if (record->event.pressed) {
-        SEND_STRING(SS_DOWN(X_LSFT) SS_DOWN(X_LCTL) SS_DOWN(X_PSCR));
-      } else {
-        clear_keyboard();
-      }
-      break;
-
     case DBG_EVA: // Macro to evaluate expresion while debuging
       if (record->event.pressed) {
         SEND_STRING(SS_DOWN(X_LALT) SS_DOWN(X_LSFT) SS_DOWN(X_8));
