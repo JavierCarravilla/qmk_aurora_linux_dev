@@ -24,9 +24,7 @@ enum layer_names {
 };
 
 enum custom_keycodes {
-  PSCR_ST = SAFE_RANGE,
-  PSCR_CB,
-  DBG_EVA
+  DBG_EVA = SAFE_RANGE
 };
 
 enum {
@@ -34,6 +32,7 @@ enum {
   TD_RFS_BWR
 };
 
+// Tap dance functions
 void dance_prt_scr(tap_dance_state_t *state, void *user_data) {
   if (state->count == 1) {
     // Print screen to clipboard
@@ -59,7 +58,7 @@ void reset_dance_refresh_browser(tap_dance_state_t *state, void *user_data) {
     unregister_code16(KC_F5);
   }
 };
-    
+
 // Tap Dance definitions
 tap_dance_action_t tap_dance_actions[] = {
   // Print screen to clipboard on single tap and store it with double
@@ -68,16 +67,19 @@ tap_dance_action_t tap_dance_actions[] = {
   [TD_RFS_BWR] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, start_dance_refresh_browser, reset_dance_refresh_browser)
 };
 
+// Left-hand home rows mods
 #define LGUI_KA LGUI_T(KC_A)
 #define LALT_KS LALT_T(KC_S)
 #define LSFT_KD LSFT_T(KC_D)
 #define LCTL_KF LCTL_T(KC_F)
 
+// Right-hand home rows mods
 #define RGUI_KSCLN RGUI_T(KC_SCLN)
-#define LALT_KL LALT_T(KC_K)
+#define LALT_KL LALT_T(KC_L)
 #define RSFT_KK RSFT_T(KC_K)
 #define RCTL_KJ RCTL_T(KC_J)
 
+//Tap dance alias
 #define PRT_SCR TD(TD_PRT_SCR)
 #define RFS_BWR TD(TD_RFS_BWR)
 
@@ -99,7 +101,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              KC_TAB, XXXXXXX, XXXXXXX, XXXXXXX, PRT_SCR, RFS_BWR,         KC_LEFT, KC_DOWN,   KC_UP, KC_RIGHT, XXXXXXX, XXXXXXX,
             KC_LSFT, DBG_EVA,   KC_F7,   KC_F8,   KC_F9, XXXXXXX,         KC_HOME, KC_PGDN, KC_PGUP,   KC_END, XXXXXXX, KC_RSFT,
         //|-----------------------------------------------------|        |-----------------------------------------------------|
-                                        KC_LSFT, _______, KC_SPC,          KC_ENT, MO(_RAISE), KC_RALT
+                                        KC_LSFT, _______, KC_SPC,          KC_ENT, MO(_ADJUST), KC_RALT
                                  //|----------------------------|        |----------------------------|
    ),
 
@@ -109,7 +111,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              KC_TAB, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,         KC_MINS,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS,  KC_GRV,
             KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,         KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE, KC_TILD,
         //|-----------------------------------------------------|        |-----------------------------------------------------|
-                                     KC_LSFT, MO(_LOWER), KC_SPC,           KC_ENT, _______, KC_RALT
+                                     KC_LSFT, MO(_ADJUST), KC_SPC,           KC_ENT, _______, KC_RALT
                                  //|----------------------------|        |----------------------------|
    ),
 
@@ -151,3 +153,11 @@ const key_override_t **key_overrides = (const key_override_t *[]){
     &delete_key_override,
     NULL // Null terminate the array of overrides!
 };
+
+#ifdef RGBLIGHT_ENABLE
+void keyboard_post_init_user(void) {
+  rgblight_enable_noeeprom(); // Enables RGB, without saving settings
+  rgblight_sethsv_noeeprom(HSV_CYAN);
+  rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+}
+#endif
