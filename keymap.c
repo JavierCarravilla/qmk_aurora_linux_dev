@@ -46,9 +46,11 @@ void dance_prt_scr(tap_dance_state_t *state, void *user_data) {
 };
 
 void start_dance_refresh_browser(tap_dance_state_t *state, void *user_data) {
+  // F5 shortcut to refresh the browser
   if (state->count == 1) {
     register_code16(KC_F5);
   } else if (state->count >= 1) {
+    // With double tap hard refresh
     SEND_STRING(SS_DOWN(X_LSFT) SS_TAP(X_F5));
     clear_keyboard();
   }

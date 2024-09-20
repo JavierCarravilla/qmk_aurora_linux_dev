@@ -3,7 +3,23 @@
 # Aurora Corne's Linux_dev Keymap
 
 _This keymap is based on the [Aurora Corne default keymap](https://github.com/qmk/qmk_firmware/tree/master/keyboards/splitkb/aurora/corne/keymaps/default)
-(which is a copy of the [Corne default keymap](https://github.com/qmk/qmk_firmware/tree/master/keyboards/crkbd/keymaps/default))._
+(which is a copy of the [Corne default keymap](https://github.com/qmk/qmk_firmware/tree/master/keyboards/crkbd/keymaps/default)).
+
+## Working with it
+Add qmk_aurora_linux_dev as a corne keyboard keymap on your existing qmk firmware:
+
+```bash
+cd keyboards/splitkb/aurora/corne/keymaps
+git submodule add git@github.com:JavierCarravilla/qmk_aurora_linux_dev.git linux_dev
+```
+
+To compile and flash the firmware, do it as usual:
+
+```bash
+qmk compile -kb splitkb/aurora/corne/rev1 -km linux_dev
+qmk flash -bl avrdude splitkb_aurora_corne_rev1_linux_dev.hex
+
+```
 
 ## Overview
 This keymap intends to be a confortable keymap for linux developers. I mainly
@@ -27,18 +43,17 @@ following features:
 
 * `HomeRow Mods` (GUI - ALT - SHIFT - CTRL order)https://precondition.github.io/home-row-mods
 * `Supr` in `Shift` + `BackSpace`
-* Double `LShift` to `CapsWord`. We can reverse it by pressing `LShift` again. https://docs.qmk.fm/#/feature_caps_word
 
 ### Layer 1: Lower
 
-![Layer 1](.images/layer1.png)
-
 The Lower layer gives access to your number keys on the top row. It also exposes
-the arrow keys in the usual Vim-style layout and, under them their related .
+the arrow keys in the usual Vim-style layout and, under them their related 'go to'
+keys (init, pgDwn, pgUp and end).
+
+This layer has also some macros and shortcuts to improve the navigation and debugging
+process
 
 ### Layer 2: Raise
-
-![Layer 2](.images/layer2.png)
 
 The Raise layer gives access to the symbols. In addition to shifted number keys on the top row, the right hand also exposes the remaining symbol keys, both as shifted and non-shifted variants.
 
