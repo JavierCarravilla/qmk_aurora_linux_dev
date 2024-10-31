@@ -213,8 +213,6 @@ bool process_detected_host_os_kb(os_variant_t detected_os) {
     return true;
 }
 
-
->>>>>>> Stashed changes
 #ifdef RGBLIGHT_ENABLE
 void keyboard_post_init_user(void) {
   rgblight_enable_noeeprom(); // Enables RGB, without saving settings
